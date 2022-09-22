@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class MapGenerator : MonoBehaviour
 {
-    private GameObject _gridGO;
+    private GameObject _gridGameObject;
     private Grid _grid;
     private TerrainTiles _terrain;
     [SerializeField]
@@ -14,25 +11,34 @@ public class MapGenerator : MonoBehaviour
 
     private GameObject _groundTileMap;
 
+    private void InitGrid()
+    {
+        _gridGameObject = new GameObject();
+        _gridGameObject.name = "world";
+        _gridGameObject.transform.position = new Vector3(0, 0, 0);
+        _gridGameObject.AddComponent<Grid>();
+        _grid = _gridGameObject.GetComponent<Grid>();
+    }
+
+    private void InitTileMap()
+    {
+        _groundTileMap = Instantiate(groundTileMapPrefab, _gridGameObject.transform, true);
+        _groundTileMap.name = "ground";
+    }
+    
     // private GameObject _groundTileMap;
     // Start is called before the first frame update
     void Start()
     {
-        _gridGO = new GameObject();
-        _gridGO.name = "world";
-        _gridGO.transform.position = new Vector3(0, 0, 0);
-        _gridGO.AddComponent<Grid>();
-        _grid = _gridGO.GetComponent<Grid>();
-
-        _groundTileMap = Instantiate(groundTileMapPrefab, _gridGO.transform, true);
-        _groundTileMap.name = "ground";
-        _groundTileMap.AddComponent<DestructableTile>();
         _terrain = GetComponent<TerrainTiles>();
-        // GenMap();
+        InitGrid();
+        InitTileMap();
+        GenMap();
     }
 
     void GenMap()
     {
+        Debug.Log("GEN");
         Tilemap tilemap = _groundTileMap.GetComponent<Tilemap>();
         for (int y = 0; y < 20; y++)
         {
